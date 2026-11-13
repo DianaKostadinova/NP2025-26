@@ -1,75 +1,67 @@
+    import java.util.Comparator;
     import java.util.Scanner;
-
     class MinMax<T extends Comparable<T>> {
-        private T min;
-        private T max;
-        private int total;      // how many elements went through update
-        private int countMin;   // how many times the current min appeared
-        private int countMax;   // how many times the current max appeared
-
-        public MinMax() {
-            min = null;
-            max = null;
-            total = 0;
-            countMin = 0;
-            countMax = 0;
-        }
-
-        void update(T element) {
-            if (total == 0) {          // first element is both min and max
+        T min;
+        T max;
+        int times;
+        int mintimes;
+        int maxtimes;
+        public MinMax(){}
+        void update(T element){
+            times++;
+            if (min == null){
                 min = element;
                 max = element;
+                mintimes = 1;
+                maxtimes = 1;
+                return;
             }
-
-            if (element.compareTo(min) < 0) {          // new, smaller min
+            int cmpMin = min.compareTo(element);
+            if(cmpMin<0){
                 min = element;
-                countMin = 1;
-            } else if (element.compareTo(min) == 0) {  // same as current min
-                countMin++;
+                mintimes = 1;
+            }else if (cmpMin == 0) {
+               mintimes++;
             }
-
-            if (element.compareTo(max) > 0) {          // new, bigger max
+            int cmpMax = max.compareTo(element);
+            if(cmpMax>  0){
                 max = element;
-                countMax = 1;
-            } else if (element.compareTo(max) == 0) {  // same as current max
-                countMax++;
+                maxtimes = 1;
+            } else if (cmpMax==0) {
+                maxtimes++;
+
             }
-
-            total++;
         }
-
-        T min() {
+        public T min() {
             return min;
         }
 
-        T max() {
+        public T max() {
             return max;
         }
-
+        private int compareOthers(){
+            if (min.compareTo(max) == 0){
+                return 0;
+            }
+            return times - (mintimes + maxtimes);
+        }
         @Override
         public String toString() {
-            int different;
-            if (min.compareTo(max) == 0) {   // all elements were equal
-                different = total - countMin;
-            } else {
-                different = total - countMin - countMax;
-            }
-            return min + " " + max + " " + different + "\n";
+            return max + " " + min+ " " + compareOthers()+"\n";
         }
     }
-
     public class MinAndMax {
         public static void main(String[] args) throws ClassNotFoundException {
             Scanner scanner = new Scanner(System.in);
             int n = scanner.nextInt();
             MinMax<String> strings = new MinMax<String>();
-            for (int i = 0; i < n; ++i) {
+            for(int i = 0; i < n; ++i) {
                 String s = scanner.next();
                 strings.update(s);
             }
             System.out.println(strings);
             MinMax<Integer> ints = new MinMax<Integer>();
-            for (int i = 0; i < n; ++i) {
+            for(int i = 0; i < n; ++i) {
                 int x = scanner.nextInt();
                 ints.update(x);
             }
